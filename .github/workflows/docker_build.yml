@@ -1,102 +1,29 @@
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
+name: Build and Push Docker Image
 
-# GitHub recommends pinning actions to a commit SHA.
-# To get a newer version, you will need to update the SHA.
-# You can also reference a tag or branch, but the action may change without warning.
-
-# Name of the workflow
-name: Build Debug Ubuntu Docker Image
-
-# Run on every push on the 'master' branch
 on:
   push:
     branches:
-      - 'main'
-
-# Automatically create GitHub release
+      - main  # Trigger on push to the main branch
+  schedule:
+    - cron: '0 0 * * *'  # Trigger at midnight UTC every day
 
 jobs:
-  release-build-push:
-
+  build-and-push:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-        with:
-          ref: main
-      - name: Get latest release from github
-        id: last_release
-        uses: InsonusK/get-latest-release@v1.0.1
-        with:
-          myToken: ${{ secrets.GITHUB_TOKEN }}
-          exclude_types: "draft|prerelease"
-          view_top: 3
-      - name: "Print result"
-        run: |
-          echo "tag_name: ${{ steps.last_release.outputs.tag_name }}"
+    - name: Check out the repo
+      uses: actions/checkout@v2
 
-      - name: Increment release version tag
-        id: increment_release
-        run: |
-          # Extract the latest release tag
-          latest_tag=$(echo "${{ steps.last_release.outputs.tag_name }}" | cut -d "v" -f2)
-          # Increment the patch version number by 1
-          new_version=$(echo $latest_tag | awk -F. '{$NF = $NF + 1;} 1' | sed 's/ /./g')
-          echo "new_version=$new_version" >> $GITHUB_ENV
-          echo $new_version
-      - name: Create Github Release with the new release tag
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
-          NEW_VERSION: ${{ env.new_version }}
-        with:
-          tag_name: v${{ env.NEW_VERSION }}
-          release_name: ubudebu Docker BUILD - Version v${{ env.NEW_VERSION }}
-          commitish: main
-          body: |
-            ubudebu updated and docker image built with githubactions and pushed to dockerhub
-          draft: false
-          prerelease: false
-      - name: Set swap space
-        uses: pierotofy/set-swap-space@master
-        with:
-          swap-size-gb: 5
-      #Check out code github repository so that workflow can access it. With --ref : master means the "master" branch.
-      - name: Checkout code
-        uses: actions/checkout@v3
-        with:
-          ref: main
-      #Preparing docker image tag
-      - name: Prepare docker image tag
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
-          NEW_VERSION: ${{ env.new_version }}
-        id: prep
-        run: |
-          DOCKER_IMAGE=filviu/ubudebu
-          TAGS="${DOCKER_IMAGE}:${{ env.NEW_VERSION }}"
-          echo ::set-output name=tags::${TAGS}
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.DOCKER_HUB_USERNAME }}
+        password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-
-      #Login to Dockerhub using Github Secrets
-      - name: Login to DockerHub
-        uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-      #Build docker image and push it to dockerhub repo
-      - name: Build and push advanced image to dockerhub
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
-          NEW_VERSION: ${{ env.new_version }}
-        id: docker_build
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-          file: Dockerfile
-          push: true
-          tags: "${{ steps.prep.outputs.tags }}, filviu/ubudebu:latest"
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        file: ./Dockerfile
+        push: true
+        tags: filviu/docker-ubudebu:latest
