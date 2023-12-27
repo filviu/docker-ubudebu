@@ -26,4 +26,4 @@ jobs:
         context: .
         file: ./Dockerfile
         push: true
-        tags: filviu/docker-ubudebu:latest
+        tags: filviu/ubudebu:latest
