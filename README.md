@@ -1,3 +1,5 @@
+[![Build and Push Docker Image](https://github.com/filviu/docker-ubudebu/actions/workflows/docker_build.yml/badge.svg)](https://github.com/filviu/docker-ubudebu/actions/workflows/docker_build.yml)
+
 # docker-ubudebu
 
 A simple docker image for troubleshooting in docker, kubernetes, openshift environments.
@@ -10,7 +12,7 @@ This way you deploy `filviu/ubudebu:latest` in your compose or as a sidecar or w
 
 The container runs tail forever so it doesn't die if deployed in k8s or OpenShift. You can also run it as easy as 
 
-`docker run --rm -it peregrine/ubudebu:latest bash`
+`docker run --rm -it filviu/ubudebu:latest bash`
 
 ## Contents
 
