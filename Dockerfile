@@ -1,5 +1,8 @@
 FROM ubuntu:latest
+
 LABEL maintainer="Silviu Vulcan"
+LABEL org.opencontainers.image.source="https://github.com/filviu/docker-ubudebu"
+
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=Etc/UTC
 
