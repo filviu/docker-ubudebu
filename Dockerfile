@@ -1,7 +1,8 @@
 FROM ubuntu:latest
 
 LABEL maintainer="Silviu Vulcan"
-LABEL org.opencontainers.image.source="https://github.com/filviu/docker-ubudebu"
+LABEL org.opencontainers.image.source=https://github.com/filviu/docker-ubudebu
+LABEL org.opencontainers.image.description="Ubuntu based docker image for troubleshooting docker, compose, k3s, k8s, openshift deployments."
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=Etc/UTC
