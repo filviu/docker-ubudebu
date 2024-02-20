@@ -4,9 +4,13 @@
 
 A simple docker image for troubleshooting in docker, kubernetes, openshift environments.
 
-You know theere is a better way but you still fondle with apt, apk, microdnf to shoehorn curl to test that API endpoint.
+You know there must be a better way but you still mess around with apt, apk, microdnf to shoehorn curl or telnet to test that API endpoint or network port. This is a better way:
 
-This way you deploy `filviu/ubudebu:latest` in your compose or as a sidecar or whatever, `exec` inside it and have the following available at your fingertips:
+You deploy `filviu/ubudebu:latest` in your compose or as a sidecar or whatever, `exec` inside it and have a number of useful tools available at your fingertips.
+
+## Versio
+
+The image is kept up-to-date by rebuilding on top of the upstream `ubuntu:latest` daily. I'm not messing with other tags besides `:latest` it is enough for my needs. If you need different Ubuntu versions PRs are welcome 😁
 
 ## Running
 
@@ -43,7 +47,7 @@ The container runs tail forever so it doesn't die if deployed in k8s or OpenShif
 
 * git
 * gdu (ncdu) - graphical disk space usage
-* mc - Midnight Commander, because the 90s were a thing
+* mc - Midnight Commander, because mc
 * openssl
 * rsync
 * unzip
